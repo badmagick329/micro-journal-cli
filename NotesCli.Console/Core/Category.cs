@@ -23,6 +23,6 @@ class Category
 
         var firstWord = text.Split(' ').First();
         firstWord = firstWord.EndsWith('.') ? firstWord[..^1] : firstWord;
-        return Aliases.Contains(firstWord);
+        return Aliases.Contains(firstWord.ToLower());
     }
 }
