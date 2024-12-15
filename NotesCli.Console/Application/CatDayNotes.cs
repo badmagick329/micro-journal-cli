@@ -13,4 +13,7 @@ class CatDayNotes
     }
 
     public DayNote? FindDayNote(DateOnly date) => DayNotes.Find(dn => dn.Date == date);
+
+    public List<DayNote> FindDayNotes(DateOnly startDate, DateOnly endDate) =>
+        DayNotes.FindAll(dn => dn.Date >= startDate && dn.Date <= endDate);
 }

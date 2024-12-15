@@ -27,14 +27,24 @@ class CatCommand : Command<CatCommand.Settings>
 
     public override int Execute(CommandContext context, Settings settings)
     {
-        var inputDateString = settings.Date;
-        if (inputDateString is null)
+        var inputDate = settings.Date;
+        if (inputDate is null)
         {
             AnsiConsole.MarkupLine("[red]Error:[/] No date specified");
             return 1;
         }
 
-        var date = DateStringToDate(inputDateString);
+        if (inputDate.Contains('-'))
+        {
+            throw new NotImplementedException();
+        }
+
+        return CatSingleDate(inputDate);
+    }
+
+    private int CatSingleDate(string inputDate)
+    {
+        var date = DateStringToDate(inputDate);
         var fileName = DateToFileName(date);
         var filePath = Path.Join(Config.NotesRoot, fileName);
         Debug.Assert(filePath is not null);
@@ -45,17 +55,35 @@ class CatCommand : Command<CatCommand.Settings>
         }
 
         var catDayNotes = new CatDayNotes(new NotesFileReader(filePath), Config.Categories);
-
         var dateNote = catDayNotes.FindDayNote(date);
         if (dateNote is null)
         {
             AnsiConsole.MarkupLine($"[red]Error:[/] No note found for date: {date}");
             return 0;
         }
+
         AnsiConsole.MarkupLineInterpolated($"[yellow]Showing note for {date}[/]");
         var view = new CatDayNoteView(dateNote);
         view.Show();
         view.ShowBreakdown();
+
+        return 0;
+    }
+
+    private int CatMultipleDates(string dateRange)
+    {
+        var rangeParts = dateRange.Split('-').Select(dr => dr.Trim()).ToList();
+        (var rangeStart, var rangeEnd) = rangeParts switch
+        {
+            { Count: 2 } => (rangeParts.First(), rangeParts.Last()),
+            _ => throw new ArgumentException("Invalid date range format. Expected: start-end"),
+        };
+        var startDate = DateStringToDate(rangeStart);
+        var endDate = DateStringToDate(rangeEnd);
+        if (startDate > endDate)
+        {
+            throw new ArgumentException("Start date must be before end date");
+        }
 
         return 0;
     }

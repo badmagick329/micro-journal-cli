@@ -14,7 +14,6 @@ static class DayNoteFactory
         var lines = dayNotesReader.Read();
         var dayNotes = new List<DayNote>();
         var currentDayLines = new List<string>();
-        int year = dayNotesReader.ReadYear();
 
         foreach (var line in lines)
         {
@@ -27,7 +26,7 @@ static class DayNoteFactory
             if (currentDayLines.Count > 0)
             {
                 Debug.Assert(TextLineInterpreter.LineIsDate(currentDayLines[0]));
-                dayNotes.Add(CreateDayNote(currentDayLines, year, categories));
+                dayNotes.Add(CreateDayNote(currentDayLines, categories));
                 currentDayLines = [];
             }
             currentDayLines.Add(line);
@@ -35,24 +34,24 @@ static class DayNoteFactory
 
         if (currentDayLines.Count > 0)
         {
-            dayNotes.Add(CreateDayNote(currentDayLines, year, categories));
+            dayNotes.Add(CreateDayNote(currentDayLines, categories));
         }
 
         return dayNotes;
     }
 
-    public static DayNote CreateDayNote(
-        IEnumerable<string> lines,
-        int year,
-        List<Category> categories
-    )
+    public static DayNote CreateDayNote(IEnumerable<string> lines, List<Category> categories)
     {
         Debug.Assert(lines.Any());
 
-        var monthString = lines.First().Split()[1][..2];
-        var dayString = lines.First().Split()[1][2..];
-        var date = new DateOnly(year, int.Parse(monthString), int.Parse(dayString));
-
+        var yearString = lines.First().Split()[1][..2];
+        var monthString = lines.First().Split()[1][2..4];
+        var dayString = lines.First().Split()[1][4..];
+        var date = new DateOnly(
+            int.Parse(yearString) + 2000,
+            int.Parse(monthString),
+            int.Parse(dayString)
+        );
         string startText = ReadStartText(lines);
         string endText = ReadEndText(lines);
         var timeSpans = ReadTimeSpanLines(lines)

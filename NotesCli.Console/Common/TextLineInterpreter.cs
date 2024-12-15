@@ -7,29 +7,6 @@ static class TextLineInterpreter
 {
     public static bool LineIsDate(string line) => line.StartsWith('#');
 
-    public static List<string> DoReadWhile(
-        List<string> lines,
-        Func<string, bool> predicate,
-        int startIndex = 0
-    )
-    {
-        if (lines.Count == 0)
-        {
-            return [];
-        }
-        Debug.Assert(startIndex < lines.Count);
-
-        List<string> result = [];
-        int i = startIndex;
-        do
-        {
-            result.Add(lines[i]);
-            i++;
-        } while (predicate(lines[i]));
-
-        return result;
-    }
-
     public static Match TryTimeSpanMatch(string text) =>
         Regex.Match(text, @"-\s(\d{2}):(\d{2})-(\d{2}):(\d{2})\s-(.*)");
 
