@@ -23,6 +23,10 @@ class TimeSpanEntry
         Category = category;
     }
 
+    public bool IsSleepEntry() =>
+        Category.Equals("sleep", StringComparison.OrdinalIgnoreCase)
+        || Category.Equals("sleep disruption", StringComparison.OrdinalIgnoreCase);
+
     public override string ToString()
     {
         return $"{StartTime}-{EndTime} - [{Category}] - {EntryText}";

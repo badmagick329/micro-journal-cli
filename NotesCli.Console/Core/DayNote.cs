@@ -29,7 +29,7 @@ class DayNote
         Dictionary<string, int> result = [];
         foreach (var entry in TimeSpanEntries)
         {
-            if (!includeSleep && entry.Category.Equals("sleep", StringComparison.OrdinalIgnoreCase))
+            if (!includeSleep && entry.IsSleepEntry())
             {
                 continue;
             }
