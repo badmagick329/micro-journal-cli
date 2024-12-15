@@ -9,7 +9,6 @@ class Program
     public static void Main(string[] args)
     {
         var appConfig = new AppConfigReader().CreateAppConfig();
-        System.Console.WriteLine($"Notes root: {appConfig.NotesRoot}");
 
         var app = new CommandApp();
         app.Configure(config =>

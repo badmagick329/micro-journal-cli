@@ -48,4 +48,41 @@ class CatDayNoteView
         }
         AnsiConsole.Write(table);
     }
+
+    public void ShowBreakdown()
+    {
+        var breakdown = DayNote.CategoryMinutesBreakdown().OrderByDescending(kvp => kvp.Value);
+        var breakdownChart = new BreakdownChart().Width(80);
+        var enumerator = NextBreakdownColor().GetEnumerator();
+        foreach (var (category, minutes) in breakdown)
+        {
+            enumerator.MoveNext();
+            breakdownChart.AddItem(category, minutes, enumerator.Current);
+        }
+        AnsiConsole.Write(breakdownChart);
+    }
+
+    private static IEnumerable<Color> NextBreakdownColor()
+    {
+        List<Color> colors =
+        [
+            Color.Red,
+            Color.Green,
+            Color.Blue,
+            Color.Yellow,
+            Color.White,
+            Color.DarkRed,
+            Color.DarkGreen,
+            Color.DarkBlue,
+            Color.DarkMagenta,
+            Color.DarkCyan,
+        ];
+
+        int i = 0;
+        while (true)
+        {
+            yield return colors[i];
+            i = (i + 1) % colors.Count;
+        }
+    }
 }

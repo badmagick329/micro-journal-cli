@@ -24,6 +24,23 @@ class DayNote
         TimeSpanEntries = timeSpans;
     }
 
+    public Dictionary<string, int> CategoryMinutesBreakdown()
+    {
+        Dictionary<string, int> result = [];
+        foreach (var entry in TimeSpanEntries)
+        {
+            if (result.ContainsKey(entry.Category))
+            {
+                result[entry.Category] += entry.Duration;
+            }
+            else
+            {
+                result[entry.Category] = entry.Duration;
+            }
+        }
+        return result;
+    }
+
     public override string ToString()
     {
         var sb = new StringBuilder();

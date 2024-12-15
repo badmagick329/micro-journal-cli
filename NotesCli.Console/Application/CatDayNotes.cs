@@ -11,4 +11,6 @@ class CatDayNotes
     {
         DayNotes = DayNoteFactory.CreateDayNotes(notesReader, categories);
     }
+
+    public DayNote? FindDayNote(DateOnly date) => DayNotes.Find(dn => dn.Date == date);
 }
