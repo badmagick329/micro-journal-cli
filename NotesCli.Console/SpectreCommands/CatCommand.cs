@@ -5,6 +5,7 @@ using System.Diagnostics;
 using NotesCli.Console.Application;
 using NotesCli.Console.Infrastructure;
 using NotesCli.Console.Infrastructure.Config;
+using NotesCli.Console.Views;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -44,9 +45,9 @@ class CatCommand : Command<CatCommand.Settings>
         AnsiConsole.MarkupLineInterpolated($"[green]Checking file[/]: [blue]{filePath}[/]");
 
         var catDayNotes = new CatDayNotes(new NotesFileReader(filePath), Config.Categories);
-
         AnsiConsole.MarkupLineInterpolated($"Number of notes read: [green]{catDayNotes.Count}[/]");
-        AnsiConsole.MarkupLine(catDayNotes.DayNotes.Last().ToAnsiStringCategoryOnly());
+        new CatDayNoteView(catDayNotes.DayNotes.Last()).Show();
+
         return 0;
     }
 }

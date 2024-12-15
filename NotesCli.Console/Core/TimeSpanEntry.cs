@@ -27,14 +27,4 @@ class TimeSpanEntry
     {
         return $"{StartTime}-{EndTime} - [{Category}] - {EntryText}";
     }
-
-    public string ToAnsiString()
-    {
-        return $"[yellow]{StartTime}[/]-[yellow]{EndTime}[/] - [lime][[{Category}]][/] - {EntryText}";
-    }
-
-    public string ToAnsiStringCategoryOnly()
-    {
-        return $"[yellow]{StartTime}-{EndTime} ({Duration}m)[/] - [lime][[{Category}]][/]";
-    }
 }
