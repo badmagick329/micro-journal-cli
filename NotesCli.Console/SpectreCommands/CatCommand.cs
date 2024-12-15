@@ -36,7 +36,7 @@ class CatCommand : Command<CatCommand.Settings>
 
         if (inputDate.Contains('-'))
         {
-            throw new NotImplementedException();
+            return CatMultipleDates(inputDate);
         }
 
         return CatSingleDate(inputDate);
@@ -54,8 +54,8 @@ class CatCommand : Command<CatCommand.Settings>
             return 1;
         }
 
-        var catDayNotes = new CatDayNotes(new NotesFileReader(filePath), Config.Categories);
-        var dateNote = catDayNotes.FindDayNote(date);
+        var manager = new DayNotesManager(new NotesFileReader(filePath), Config.Categories);
+        var dateNote = manager.FindDayNote(date);
         if (dateNote is null)
         {
             AnsiConsole.MarkupLine($"[red]Error:[/] No note found for date: {date}");
@@ -84,6 +84,38 @@ class CatCommand : Command<CatCommand.Settings>
         {
             throw new ArgumentException("Start date must be before end date");
         }
+        List<DateOnly> dates = [];
+        for (int i = 0; ; i++)
+        {
+            var nextDate = startDate.AddDays(i);
+            if (nextDate > endDate)
+            {
+                break;
+            }
+            dates.Add(nextDate);
+        }
+
+        List<string> filePaths = [];
+        foreach (var date in dates)
+        {
+            var fileName = DateToFileName(date);
+            var filePath = Path.Join(Config.NotesRoot, fileName);
+            Debug.Assert(filePath is not null);
+            if (!File.Exists(filePath))
+            {
+                AnsiConsole.MarkupLine($"[red]Error:[/] File not found: {filePath}");
+                return 1;
+            }
+            if (!filePaths.Contains(filePath))
+            {
+                filePaths.Add(filePath);
+            }
+        }
+        var manager = new DayNotesManager(new NotesFileReader(filePaths), Config.Categories);
+        var dayNotes = manager.FindDayNotes(startDate, endDate);
+        var view = new CatDayNotesView(dayNotes);
+        AnsiConsole.MarkupLine($"[yellow]Showing breakdown for {startDate} to {endDate}[/]");
+        view.ShowBreakdown();
 
         return 0;
     }

@@ -4,9 +4,12 @@ namespace NotesCli.Console.Infrastructure;
 
 class NotesFileReader : IDayNotesReader
 {
-    public string FilePath { get; init; }
+    public IEnumerable<string> FilePaths { get; init; }
 
-    public NotesFileReader(string filePath) => FilePath = filePath;
+    public NotesFileReader(string filePath) => FilePaths = [filePath];
 
-    public string[] Read() => File.ReadAllLines(FilePath);
+    public NotesFileReader(IEnumerable<string> filePaths) => FilePaths = filePaths;
+
+    public IEnumerable<string> Read() =>
+        FilePaths.SelectMany(fp => File.ReadAllLines(fp)).ToArray();
 }

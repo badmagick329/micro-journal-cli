@@ -2,12 +2,12 @@ using NotesCli.Console.Core;
 
 namespace NotesCli.Console.Application;
 
-class CatDayNotes
+class DayNotesManager
 {
     public List<DayNote> DayNotes { get; init; }
     public int Count => DayNotes.Count;
 
-    public CatDayNotes(IDayNotesReader notesReader, List<Category> categories)
+    public DayNotesManager(IDayNotesReader notesReader, List<Category> categories)
     {
         DayNotes = DayNoteFactory.CreateDayNotes(notesReader, categories);
     }

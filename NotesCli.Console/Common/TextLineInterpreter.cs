@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace NotesCli.Console.Common;
@@ -26,6 +25,4 @@ static class TextLineInterpreter
 
         return (startHours, startMinutes, endHours, endMinutes, text);
     }
-
-    // public static (TimeOnly startTime, TimeOnly endTime)?
 }
