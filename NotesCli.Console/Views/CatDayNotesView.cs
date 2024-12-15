@@ -17,17 +17,6 @@ class CatDayNotesView
             .OrderByDescending(kvp => kvp.Value);
 
         var breakdownChart = new BreakdownChart().Width(80);
-        var enumerator = NextBreakdownColor().GetEnumerator();
-        foreach (var (category, minutes) in combinedBreakdown)
-        {
-            enumerator.MoveNext();
-            breakdownChart.AddItem(category, minutes, enumerator.Current);
-        }
-        AnsiConsole.Write(breakdownChart);
-    }
-
-    private static IEnumerable<Color> NextBreakdownColor()
-    {
         List<Color> colors =
         [
             Color.Red,
@@ -41,12 +30,16 @@ class CatDayNotesView
             Color.DarkMagenta,
             Color.DarkCyan,
         ];
-
-        int i = 0;
-        while (true)
+        int colorIndex = 0;
+        int maxItems = colors.Count;
+        foreach (var (category, minutes) in combinedBreakdown)
         {
-            yield return colors[i];
-            i = (i + 1) % colors.Count;
+            breakdownChart.AddItem(category, minutes, colors[colorIndex++]);
+            if (colorIndex >= maxItems)
+            {
+                break;
+            }
         }
+        AnsiConsole.Write(breakdownChart);
     }
 }
