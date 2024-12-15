@@ -5,3 +5,6 @@ dotnet_diagnostic.CS8618.severity = none
 dotnet_diagnostic.IDE0290.severity = none
 # IDE0160: Convert to block scoped namespace
 dotnet_diagnostic.IDE0160.severity = none
+
+# SYSLIB1045: Convert to 'GeneratedRegexAttribute'.
+dotnet_diagnostic.SYSLIB1045.severity = none
