@@ -29,6 +29,9 @@ class CatDayNotesView
             Color.DarkBlue,
             Color.DarkMagenta,
             Color.DarkCyan,
+            Color.Red3,
+            Color.Green3,
+            Color.Yellow3,
         ];
         int colorIndex = 0;
         int maxItems = colors.Count;
