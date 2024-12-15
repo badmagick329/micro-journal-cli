@@ -7,8 +7,8 @@ class CatDayNotes
     public List<DayNote> DayNotes { get; init; }
     public int Count => DayNotes.Count;
 
-    public CatDayNotes(IDayNotesReader notesReader)
+    public CatDayNotes(IDayNotesReader notesReader, List<Category> categories)
     {
-        DayNotes = DayNoteFactory.CreateDayNotes(notesReader);
+        DayNotes = DayNoteFactory.CreateDayNotes(notesReader, categories);
     }
 }

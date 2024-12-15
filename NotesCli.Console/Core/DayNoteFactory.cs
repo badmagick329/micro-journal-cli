@@ -6,7 +6,10 @@ namespace NotesCli.Console.Core;
 
 static class DayNoteFactory
 {
-    public static List<DayNote> CreateDayNotes(IDayNotesReader dayNotesReader)
+    public static List<DayNote> CreateDayNotes(
+        IDayNotesReader dayNotesReader,
+        List<Category> categories
+    )
     {
         var lines = dayNotesReader.Read();
         var dayNotes = new List<DayNote>();
@@ -24,7 +27,7 @@ static class DayNoteFactory
             if (currentDayLines.Count > 0)
             {
                 Debug.Assert(TextLineInterpreter.LineIsDate(currentDayLines[0]));
-                dayNotes.Add(CreateDayNote(currentDayLines, year));
+                dayNotes.Add(CreateDayNote(currentDayLines, year, categories));
                 currentDayLines = [];
             }
             currentDayLines.Add(line);
@@ -32,13 +35,17 @@ static class DayNoteFactory
 
         if (currentDayLines.Count > 0)
         {
-            dayNotes.Add(CreateDayNote(currentDayLines, year));
+            dayNotes.Add(CreateDayNote(currentDayLines, year, categories));
         }
 
         return dayNotes;
     }
 
-    public static DayNote CreateDayNote(IEnumerable<string> lines, int year)
+    public static DayNote CreateDayNote(
+        IEnumerable<string> lines,
+        int year,
+        List<Category> categories
+    )
     {
         Debug.Assert(lines.Any());
 
@@ -49,7 +56,7 @@ static class DayNoteFactory
         string startText = ReadStartText(lines);
         string endText = ReadEndText(lines);
         var timeSpans = ReadTimeSpanLines(lines)
-            .Select(text => TimeSpanEntryFactory.CreateTimeSpan(text))
+            .Select(text => TimeSpanEntryFactory.CreateTimeSpan(text, categories))
             .ToList();
         return new DayNote(date, startText, endText, timeSpans);
     }

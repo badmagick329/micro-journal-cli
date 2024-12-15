@@ -43,9 +43,10 @@ class CatCommand : Command<CatCommand.Settings>
         }
         AnsiConsole.MarkupLineInterpolated($"[green]Checking file[/]: [blue]{filePath}[/]");
 
-        var catDayNotes = new CatDayNotes(new NotesReader(filePath));
+        var catDayNotes = new CatDayNotes(new NotesFileReader(filePath), Config.Categories);
 
         AnsiConsole.MarkupLineInterpolated($"Number of notes read: [green]{catDayNotes.Count}[/]");
+        AnsiConsole.MarkupLine(catDayNotes.DayNotes.Last().ToAnsiStringCategoryOnly());
         return 0;
     }
 }

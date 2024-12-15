@@ -1,5 +1,6 @@
 namespace NotesCli.Console.Infrastructure.Config;
 
+using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using NotesCli.Console.Application;
 
@@ -19,6 +20,12 @@ class AppConfigReader : IAppConfigReader
     {
         var notesRoot = Config["Notes:Root"];
         ArgumentException.ThrowIfNullOrWhiteSpace(notesRoot);
-        return new AppConfig(NotesRoot: notesRoot);
+
+        var aliases = Config.GetSection("Notes:Aliases").Get<Dictionary<string, string[]>>();
+        Debug.Assert(aliases is not null);
+
+        var categoryReader = new CategoryReader(aliases);
+
+        return new AppConfig(NotesRoot: notesRoot, Categories: categoryReader.Read());
     }
 }

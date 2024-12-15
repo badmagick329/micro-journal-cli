@@ -3,11 +3,11 @@ using NotesCli.Console.Core;
 
 namespace NotesCli.Console.Infrastructure;
 
-class NotesReader : IDayNotesReader
+class NotesFileReader : IDayNotesReader
 {
     public string FilePath { get; init; }
 
-    public NotesReader(string filePath) => FilePath = filePath;
+    public NotesFileReader(string filePath) => FilePath = filePath;
 
     public string[] Read() => File.ReadAllLines(FilePath);
 
@@ -20,6 +20,6 @@ class NotesReader : IDayNotesReader
             throw new ArgumentException("Invalid file path.");
         }
 
-        return int.Parse(match.Groups[1].Value);
+        return 2000 + int.Parse(match.Groups[1].Value);
     }
 }

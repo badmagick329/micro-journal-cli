@@ -45,7 +45,7 @@ static class TextLineInterpreter
         var startMinutes = int.Parse(match.Groups[2].Value);
         var endHours = int.Parse(match.Groups[3].Value);
         var endMinutes = int.Parse(match.Groups[4].Value);
-        var text = match.Groups[5].Value;
+        var text = match.Groups[5].Value.Trim();
 
         return (startHours, startMinutes, endHours, endMinutes, text);
     }

@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace NotesCli.Console.Core;
 
 class DayNote
@@ -20,5 +22,46 @@ class DayNote
             Summary = endText;
         }
         TimeSpanEntries = timeSpans;
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine(Date.ToString("yyyy/MM/dd"));
+        sb.AppendLine(StartOfDayText);
+        foreach (var timeSpan in TimeSpanEntries)
+        {
+            sb.AppendLine(timeSpan.ToString());
+        }
+        sb.AppendLine(Summary);
+        return sb.ToString();
+    }
+
+    public string ToAnsiString()
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine(Date.ToString("yyyy/MM/dd"));
+
+        sb.AppendLine(StartOfDayText);
+        foreach (var timeSpan in TimeSpanEntries)
+        {
+            sb.AppendLine(timeSpan.ToAnsiString());
+        }
+        sb.AppendLine(Summary);
+        return sb.ToString();
+    }
+
+    public string ToAnsiStringCategoryOnly()
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine(Date.ToString("yyyy/MM/dd"));
+
+        sb.AppendLine(StartOfDayText);
+        foreach (var timeSpan in TimeSpanEntries)
+        {
+            sb.AppendLine(timeSpan.ToAnsiStringCategoryOnly());
+        }
+        sb.AppendLine(Summary);
+        return sb.ToString();
     }
 }
