@@ -12,7 +12,7 @@ class AppConfigReader : IAppConfigReader
     {
         Config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("notessettings.json")
             .Build();
     }
 
