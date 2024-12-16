@@ -12,6 +12,13 @@ class CatDayNotesView
     public void ShowBreakdown()
     {
         var breakdowns = DayNotes.Select(dn => dn.CategoryMinutesBreakdown()).ToList();
+        foreach (var breakdown in breakdowns)
+        {
+            foreach (var (category, minutes) in breakdown)
+            {
+                breakdown[category] /= breakdowns.Count;
+            }
+        }
         var combinedBreakdown = DayNote
             .CombineMinutesBreakdowns(breakdowns)
             .OrderByDescending(kvp => kvp.Value);

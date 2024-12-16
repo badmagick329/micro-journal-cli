@@ -24,27 +24,16 @@ class DayNote
         TimeSpanEntries = timeSpans;
     }
 
-    public Dictionary<string, int> CategoryMinutesBreakdown(bool includeSleep = false)
-    {
-        Dictionary<string, int> result = [];
-        foreach (var entry in TimeSpanEntries)
-        {
-            if (!includeSleep && entry.IsSleepEntry())
-            {
-                continue;
-            }
+    public Dictionary<string, int> CategoryMinutesBreakdown() =>
+        TimeSpanEntries
+            .Where(e => !e.IsSleepEntry())
+            .GroupBy(e => e.Category)
+            .ToDictionary(g => g.Key, g => g.Sum(e => e.Duration));
 
-            if (result.ContainsKey(entry.Category))
-            {
-                result[entry.Category] += entry.Duration;
-            }
-            else
-            {
-                result[entry.Category] = entry.Duration;
-            }
-        }
-        return result;
-    }
+    public Dictionary<string, int> CategoryMinutesBreakdownWithSleep() =>
+        TimeSpanEntries
+            .GroupBy(e => e.Category)
+            .ToDictionary(g => g.Key, g => g.Sum(e => e.Duration));
 
     public static Dictionary<string, int> CombineMinutesBreakdowns(
         List<Dictionary<string, int>> breakdowns

@@ -65,6 +65,9 @@ class CatCommand : Command<CatCommand.Settings>
         AnsiConsole.MarkupLineInterpolated($"[yellow]Showing note for {date}[/]");
         var view = new CatDayNoteView(dateNote);
         view.Show();
+        AnsiConsole.MarkupLineInterpolated(
+            $"[yellow]Showing breakdown for {date}[/] [[minutes/day]]"
+        );
         view.ShowBreakdown();
 
         return 0;
@@ -114,7 +117,9 @@ class CatCommand : Command<CatCommand.Settings>
         var manager = new DayNotesManager(new NotesFileReader(filePaths), Config.Categories);
         var dayNotes = manager.FindDayNotes(startDate, endDate);
         var view = new CatDayNotesView(dayNotes);
-        AnsiConsole.MarkupLine($"[yellow]Showing breakdown for {startDate} to {endDate}[/]");
+        AnsiConsole.MarkupLine(
+            $"[yellow]Showing breakdown for {startDate} to {endDate}[/] [[average minutes/day]]"
+        );
         view.ShowBreakdown();
 
         return 0;
