@@ -3,7 +3,6 @@ using NotesCli.Console.Application;
 using NotesCli.Console.Infrastructure;
 using NotesCli.Console.Infrastructure.Config;
 using NotesCli.Console.Views;
-using Spectre.Console;
 
 namespace NotesCli.Console.Presentation;
 
@@ -27,14 +26,16 @@ static class Commands
 
     private static int CatSingleDate(string inputDate)
     {
+        var config = new AppConfigReader().CreateAppConfig();
+        var consoleOut = new ConsoleOut();
+
         var date = DateStringToDate(inputDate);
         var fileName = DateToFileName(date);
-        var config = new AppConfigReader().CreateAppConfig();
         var filePath = Path.Join(config.NotesRoot, fileName);
         Debug.Assert(filePath is not null);
         if (!File.Exists(filePath))
         {
-            AnsiConsole.MarkupLine($"[red]Error:[/] File not found: {filePath}");
+            consoleOut.WriteLineError($"File not found: {filePath}");
             return 1;
         }
 
@@ -42,16 +43,14 @@ static class Commands
         var dateNote = manager.FindDayNote(date);
         if (dateNote is null)
         {
-            AnsiConsole.MarkupLine($"[red]Error:[/] No note found for date: {date}");
+            consoleOut.WriteLineError($"No note found for date: {date}");
             return 0;
         }
 
-        AnsiConsole.MarkupLineInterpolated($"[yellow]Showing note for {date}[/]");
+        consoleOut.WriteLineWarn($"Note for {date}");
         var view = new CatDayNoteView(dateNote);
         view.Show();
-        AnsiConsole.MarkupLineInterpolated(
-            $"[yellow]Showing breakdown for {date}[/] [[minutes/day]]"
-        );
+        consoleOut.WriteLineWarn($"Breakdown for {date} [minutes/day]");
         view.ShowBreakdown();
 
         return 0;
@@ -60,6 +59,7 @@ static class Commands
     private static int CatMultipleDates(string dateRange)
     {
         var config = new AppConfigReader().CreateAppConfig();
+        var consoleOut = new ConsoleOut();
 
         var rangeParts = dateRange.Split('-').Select(dr => dr.Trim()).ToList();
         (var rangeStart, var rangeEnd) = rangeParts switch
@@ -92,7 +92,7 @@ static class Commands
             Debug.Assert(filePath is not null);
             if (!File.Exists(filePath))
             {
-                AnsiConsole.MarkupLine($"[red]Error:[/] File not found: {filePath}");
+                consoleOut.WriteLineError($"File not found: {filePath}");
                 return 1;
             }
             if (!filePaths.Contains(filePath))
@@ -103,9 +103,7 @@ static class Commands
         var manager = new DayNotesManager(new NotesFileReader(filePaths), config.Categories);
         var dayNotes = manager.FindDayNotes(startDate, endDate);
         var view = new CatDayNotesView(dayNotes);
-        AnsiConsole.MarkupLine(
-            $"[yellow]Showing breakdown for {startDate} to {endDate}[/] [[average minutes/day]]"
-        );
+        consoleOut.WriteLineWarn($"Notes for {startDate} to {endDate} [minutes/day]");
         view.ShowBreakdown();
 
         return 0;
