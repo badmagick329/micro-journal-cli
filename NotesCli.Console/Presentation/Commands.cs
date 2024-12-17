@@ -1,52 +1,36 @@
-namespace NotesCli.Console.SpectreCommands;
-
-using System.ComponentModel;
 using System.Diagnostics;
 using NotesCli.Console.Application;
 using NotesCli.Console.Infrastructure;
 using NotesCli.Console.Infrastructure.Config;
 using NotesCli.Console.Views;
 using Spectre.Console;
-using Spectre.Console.Cli;
 
-class CatCommand : Command<CatCommand.Settings>
+namespace NotesCli.Console.Presentation;
+
+static class Commands
 {
-    public AppConfig Config { get; init; }
-
-    public sealed class Settings : CommandSettings
+    /// <summary>
+    /// Cat a date or a range of dates
+    /// </summary>
+    /// <param name="dates">-d, Date or range of dates separated by -</param>
+    public static void Cat(string dates)
     {
-        [Description("Date to cat (yymmdd)")]
-        [CommandArgument(0, "<date>")]
-        public string? Date { get; init; }
-    }
-
-    public CatCommand()
-    {
-        Config = new AppConfigReader().CreateAppConfig();
-    }
-
-    public override int Execute(CommandContext context, Settings settings)
-    {
-        var inputDate = settings.Date;
-        if (inputDate is null)
+        if (dates.Contains('-'))
         {
-            AnsiConsole.MarkupLine("[red]Error:[/] No date specified");
-            return 1;
+            CatMultipleDates(dates);
         }
-
-        if (inputDate.Contains('-'))
+        else
         {
-            return CatMultipleDates(inputDate);
+            CatSingleDate(dates);
         }
-
-        return CatSingleDate(inputDate);
     }
 
-    private int CatSingleDate(string inputDate)
+    private static int CatSingleDate(string inputDate)
     {
         var date = DateStringToDate(inputDate);
         var fileName = DateToFileName(date);
-        var filePath = Path.Join(Config.NotesRoot, fileName);
+        var config = new AppConfigReader().CreateAppConfig();
+        var filePath = Path.Join(config.NotesRoot, fileName);
         Debug.Assert(filePath is not null);
         if (!File.Exists(filePath))
         {
@@ -54,7 +38,7 @@ class CatCommand : Command<CatCommand.Settings>
             return 1;
         }
 
-        var manager = new DayNotesManager(new NotesFileReader(filePath), Config.Categories);
+        var manager = new DayNotesManager(new NotesFileReader(filePath), config.Categories);
         var dateNote = manager.FindDayNote(date);
         if (dateNote is null)
         {
@@ -73,8 +57,10 @@ class CatCommand : Command<CatCommand.Settings>
         return 0;
     }
 
-    private int CatMultipleDates(string dateRange)
+    private static int CatMultipleDates(string dateRange)
     {
+        var config = new AppConfigReader().CreateAppConfig();
+
         var rangeParts = dateRange.Split('-').Select(dr => dr.Trim()).ToList();
         (var rangeStart, var rangeEnd) = rangeParts switch
         {
@@ -102,7 +88,7 @@ class CatCommand : Command<CatCommand.Settings>
         foreach (var date in dates)
         {
             var fileName = DateToFileName(date);
-            var filePath = Path.Join(Config.NotesRoot, fileName);
+            var filePath = Path.Join(config.NotesRoot, fileName);
             Debug.Assert(filePath is not null);
             if (!File.Exists(filePath))
             {
@@ -114,7 +100,7 @@ class CatCommand : Command<CatCommand.Settings>
                 filePaths.Add(filePath);
             }
         }
-        var manager = new DayNotesManager(new NotesFileReader(filePaths), Config.Categories);
+        var manager = new DayNotesManager(new NotesFileReader(filePaths), config.Categories);
         var dayNotes = manager.FindDayNotes(startDate, endDate);
         var view = new CatDayNotesView(dayNotes);
         AnsiConsole.MarkupLine(
