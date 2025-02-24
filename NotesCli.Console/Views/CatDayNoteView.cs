@@ -1,3 +1,4 @@
+using System.Text;
 using NotesCli.Console.Core;
 using Spectre.Console;
 
@@ -52,33 +53,15 @@ class CatDayNoteView
     public void ShowBreakdown()
     {
         var breakdown = DayNote.CategoryMinutesBreakdown().OrderByDescending(kvp => kvp.Value);
-        var breakdownChart = new BreakdownChart().Width(80);
-        List<Color> colors =
-        [
-            Color.Red,
-            Color.Green,
-            Color.Blue,
-            Color.Yellow,
-            Color.White,
-            Color.DarkRed,
-            Color.DarkGreen,
-            Color.DarkBlue,
-            Color.DarkMagenta,
-            Color.DarkCyan,
-            Color.Red3,
-            Color.Green3,
-            Color.Yellow3,
-        ];
-        int colorIndex = 0;
-        int maxItems = colors.Count;
-        foreach (var (category, minutes) in breakdown)
-        {
-            breakdownChart.AddItem(category, minutes, colors[colorIndex++]);
-            if (colorIndex >= maxItems)
-            {
-                break;
-            }
-        }
-        AnsiConsole.Write(breakdownChart);
+        ChartRenderer.MinutesChart(breakdown);
+
+        var scoredMinutes = DayNote.ScoredMinutes;
+        var totalMinutes = DayNote.TotalMinutes;
+        var totalScore = DayNote.TotalScore;
+        var averageDifficulty =
+            DayNote.TimeSpanEntries.Where(t => t.Difficulty is not null).Average(t => t.Difficulty)
+            ?? 0;
+        ChartRenderer.PrintScoreLegend();
+        ChartRenderer.ScoreChart(scoredMinutes, totalMinutes, totalScore, averageDifficulty);
     }
 }

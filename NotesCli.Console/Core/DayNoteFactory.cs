@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using NotesCli.Console.Common;
-using Spectre.Console;
 
 namespace NotesCli.Console.Core;
 

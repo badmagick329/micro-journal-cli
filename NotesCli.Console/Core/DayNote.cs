@@ -8,6 +8,11 @@ class DayNote
     public List<TimeSpanEntry> TimeSpanEntries { get; private set; } = [];
     public string StartOfDayText { get; init; }
     public string Summary { get; init; }
+    public int ScoredMinutes =>
+        TimeSpanEntries.Where(t => t.Score is not null).Sum(t => t.Duration);
+    public int TotalScore =>
+        (int)TimeSpanEntries.Where(t => t.Score is not null).Sum(t => t.Score).GetValueOrDefault();
+    public int TotalMinutes => TimeSpanEntries.Sum(t => t.Duration);
 
     public DayNote(DateOnly date, string startText, string endText, List<TimeSpanEntry> timeSpans)
     {

@@ -10,8 +10,8 @@ static class TimeSpanEntryFactory
         var match = TextLineInterpreter.TryTimeSpanMatch(text);
         Debug.Assert(match.Success, "Successful match expected. Invalid text passed to factory");
 
-        var (startHours, startMinutes, endHours, endMinutes, entryText) =
-            TextLineInterpreter.ReadHoursMinutesAndTextFromMatch(match);
+        var (startHours, startMinutes, endHours, endMinutes, entryText, difficulty) =
+            TextLineInterpreter.ReadInputForTimeSpanEntry(match);
         var category = "Other";
         foreach (var c in categories)
         {
@@ -28,7 +28,8 @@ static class TimeSpanEntryFactory
             endHours,
             endMinutes,
             entryText,
-            category
+            category,
+            difficulty
         );
     }
 }

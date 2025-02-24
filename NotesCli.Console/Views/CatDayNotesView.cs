@@ -22,34 +22,17 @@ class CatDayNotesView
         var combinedBreakdown = DayNote
             .CombineMinutesBreakdowns(breakdowns)
             .OrderByDescending(kvp => kvp.Value);
+        ChartRenderer.MinutesChart(combinedBreakdown);
 
-        var breakdownChart = new BreakdownChart().Width(80);
-        List<Color> colors =
-        [
-            Color.Red,
-            Color.Green,
-            Color.Blue,
-            Color.Yellow,
-            Color.White,
-            Color.DarkRed,
-            Color.DarkGreen,
-            Color.DarkBlue,
-            Color.DarkMagenta,
-            Color.DarkCyan,
-            Color.Red3,
-            Color.Green3,
-            Color.Yellow3,
-        ];
-        int colorIndex = 0;
-        int maxItems = colors.Count;
-        foreach (var (category, minutes) in combinedBreakdown)
-        {
-            breakdownChart.AddItem(category, minutes, colors[colorIndex++]);
-            if (colorIndex >= maxItems)
-            {
-                break;
-            }
-        }
-        AnsiConsole.Write(breakdownChart);
+        var scoredMinutes = DayNotes.Sum(dn => dn.ScoredMinutes);
+        var totalMinutes = DayNotes.Sum(dn => dn.TotalMinutes);
+        var totalScore = DayNotes.Sum(dn => dn.TotalScore);
+        var averageDifficulty =
+            DayNotes
+                .SelectMany(dn => dn.TimeSpanEntries)
+                .Where(t => t.Difficulty is not null)
+                .Average(t => t.Difficulty) ?? 0;
+        ChartRenderer.PrintScoreLegend();
+        ChartRenderer.ScoreChart(scoredMinutes, totalMinutes, totalScore, averageDifficulty);
     }
 }

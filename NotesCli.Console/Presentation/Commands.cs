@@ -26,6 +26,7 @@ static class Commands
 
     private static int CatSingleDate(string inputDate)
     {
+        // TODO: Refactor
         var config = new AppConfigReader().CreateAppConfig();
         var consoleOut = new ConsoleOut();
 
@@ -58,6 +59,7 @@ static class Commands
 
     private static int CatMultipleDates(string dateRange)
     {
+        // TODO: Refactor
         var config = new AppConfigReader().CreateAppConfig();
         var consoleOut = new ConsoleOut();
 
